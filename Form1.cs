@@ -10,79 +10,114 @@ namespace Aplicatie_Matei_Dragos_Catalin_LFA
         {
             InitializeComponent();
         }
-
-        private void Button_Click(object sender, EventArgs e)
+        private void SearchButton_Click(object sender, EventArgs e)
         {
             string pattern = textBox1.Text;
-            string text = textBox2.Text;
+            string text1 = textBox2.Text;
+            string text2 = textBox3.Text;
 
-            // Verificăm dacă pattern-ul este valid
-            if (IsValidRegex(pattern))
+            // Ensure all text boxes are completed
+            if (!IsValidRegex(pattern, text1, text2))
             {
-                MessageBox.Show("Este un text normal, nu un pattern.", "Informație", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
-            // Verificăm dacă textul este gol
-            if (string.IsNullOrWhiteSpace(text))
-            {
-                MessageBox.Show("Introduceți textul în câmpul corespunzător.", "Eroare", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
-            }
+            // Split the texts into lines
+            string[] lines1 = text1.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+            string[] lines2 = text2.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
 
-            // Separăm textul în linii
-            string[] lines = text.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
-
-            bool patternFound = false;
-            for (int i = 0; i < lines.Length; i++)
+            // Check text1 lines against the pattern
+            for (int i = 0; i < lines1.Length; i++)
             {
-                // Verificăm dacă linia curentă are match cu pattern-ul
-                Match match = Regex.Match(lines[i], pattern);
-                if (match.Success)
+                if (Regex.IsMatch(lines1[i], pattern))
                 {
-                    patternFound = true;
-                    int lineIndex = i + 1; // Indexul liniei (începând de la 1)
-                    int columnIndex = match.Index + 1; // Indexul coloanei (începând de la 1)
-                    MessageBox.Show($"Pattern-ul a fost găsit în linia {lineIndex}, coloana {columnIndex}: {lines[i]}", "Rezultat", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    int lineIndex = i + 1; // Line index (starting from 1)
+                    MessageBox.Show($"Pattern-ul a fost găsit în textul 1, linia {lineIndex}: {lines1[i]}", "Rezultat", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    int lineIndex = i + 1; // Line index (starting from 1)
+                    MessageBox.Show($"Pattern-ul nu a fost găsit în textul 1, linia {lineIndex}: {lines1[i]}", "Rezultat", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
 
-            // Dacă nu s-a găsit niciun pattern în nicio linie
-            if (!patternFound)
+            // Check text2 lines against the pattern
+            for (int i = 0; i < lines2.Length; i++)
             {
-                MessageBox.Show($"Pattern-ul \"{pattern}\" nu a fost găsit în text.", "Rezultat", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (Regex.IsMatch(lines2[i], pattern))
+                {
+                    int lineIndex = i + 1; // Line index (starting from 1)
+                    MessageBox.Show($"Pattern-ul a fost găsit în textul 2, linia {lineIndex}: {lines2[i]}", "Rezultat", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    int lineIndex = i + 1; // Line index (starting from 1)
+                    MessageBox.Show($"Pattern-ul nu a fost găsit în textul 2, linia {lineIndex}: {lines2[i]}", "Rezultat", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
             }
         }
 
-        private bool IsValidRegex(string pattern)
+        private bool IsValidPattern(string pattern)
         {
-            // Verificăm dacă șablonul este gol sau este un text simplu
-            if (string.IsNullOrWhiteSpace(pattern) || !Regex.IsMatch(pattern, @"^[\w\s]*$"))
+            // Check if the pattern is empty
+            if (string.IsNullOrWhiteSpace(pattern))
             {
+                MessageBox.Show("Introduceți un șablon de expresie regulată.", "Eroare", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
-            // Verificăm dacă șablonul este valid
+            // Check if the pattern contains special characters
+            if (!Regex.IsMatch(pattern, @"[*+?|()\[\]{}\\.]"))
+            {
+                MessageBox.Show("Introduceți un șablon de expresie regulată valid.", "Eroare", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            // Check if the pattern is a valid regular expression
             try
             {
-                Regex.IsMatch("", pattern);
+                // Attempt to compile the regular expression
+                Regex.Match("", pattern);
                 return true;
             }
-            catch
+            catch (ArgumentException)
             {
-                // Dacă există o eroare, expresia regulată este invalidă
+                // If an ArgumentException is thrown, the pattern is invalid
+                MessageBox.Show("Introduceți un șablon de expresie regulată valid.", "Eroare", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+        private bool IsValidText(string text)
         {
-            // La fiecare modificare a textului din textBox1, verificăm dacă noul text este un pattern valid
-            string pattern = textBox1.Text;
-            if (!IsValidRegex(pattern))
+            // Check if the text is empty
+            if (string.IsNullOrWhiteSpace(text))
             {
-                MessageBox.Show("Este un text normal, nu un pattern.", "Informație", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return false;
             }
+
+            // You can add more specific validation logic for the text if needed
+            // For now, let's assume any non-empty text is considered valid
+            return true;
+        }
+
+        private bool IsValidRegex(string pattern, string text1, string text2)
+        {
+            // Check if the pattern is valid
+            if (!IsValidPattern(pattern))
+            {
+                return false;
+            }
+
+            // Check if the texts are valid
+            if (!IsValidText(text1) || !IsValidText(text2))
+            {
+                MessageBox.Show("Introduceți text valid în ambele casete de text.", "Eroare", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+
+            // At this point, the pattern and texts are valid
+            return true;
         }
     }
 }
