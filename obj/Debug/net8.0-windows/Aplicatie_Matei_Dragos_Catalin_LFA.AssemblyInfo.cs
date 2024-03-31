@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Aplicatie_Matei_Dragos_Catalin_LFA")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+59f768a71b1679f59e2e2261cb770b8065623825")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+22e6d03d44338290e1da53b7e7f7aad260a907b4")]
 [assembly: System.Reflection.AssemblyProductAttribute("Aplicatie_Matei_Dragos_Catalin_LFA")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Aplicatie_Matei_Dragos_Catalin_LFA")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
