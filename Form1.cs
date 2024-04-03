@@ -1,20 +1,25 @@
-﻿using System;
-using System.Text.RegularExpressions;
-using System.Windows.Forms;
+﻿using System.Text.RegularExpressions;
 
 namespace Aplicatie_Matei_Dragos_Catalin_LFA
 {
     public partial class Form1 : Form
     {
+        // Definirea variabilelor de instanță pentru pattern, text1 și text2
+        private string pattern;
+        private string text1;
+        private string text2;
+
         public Form1()
         {
             InitializeComponent();
         }
+
         private void SearchButton_Click(object sender, EventArgs e)
         {
-            string pattern = textBox1.Text;
-            string text1 = textBox2.Text;
-            string text2 = textBox3.Text;
+            // Actualizarea valorilor pentru pattern, text1 și text2
+            pattern = textBox1.Text;
+            text1 = textBox2.Text;
+            text2 = textBox3.Text;
 
             // Ensure all text boxes are completed
             if (!IsValidRegex(pattern, text1, text2))
@@ -22,38 +27,27 @@ namespace Aplicatie_Matei_Dragos_Catalin_LFA
                 return;
             }
 
-            // Split the texts into lines
-            string[] lines1 = text1.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
-            string[] lines2 = text2.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+            // Check if pattern exists in text1
+            DisplayMatches(text1, pattern, "textul 1");
 
-            // Check text1 lines against the pattern
-            for (int i = 0; i < lines1.Length; i++)
+            // Check if pattern exists in text2
+            DisplayMatches(text2, pattern, "textul 2");
+        }
+
+        private void DisplayMatches(string text, string pattern, string textName)
+        {
+            MatchCollection matches = Regex.Matches(text, pattern);
+            Console.WriteLine(matches.ToString());
+            if (matches.Count > 0)
             {
-                if (Regex.IsMatch(lines1[i], pattern))
+                foreach (Match match in matches)
                 {
-                    int lineIndex = i + 1; // Line index (starting from 1)
-                    MessageBox.Show($"Pattern-ul a fost găsit în textul 1, linia {lineIndex}: {lines1[i]}", "Rezultat", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else
-                {
-                    int lineIndex = i + 1; // Line index (starting from 1)
-                    MessageBox.Show($"Pattern-ul nu a fost găsit în textul 1, linia {lineIndex}: {lines1[i]}", "Rezultat", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show($"Pattern-ul a fost găsit în {textName} la poziția {match.Index} și conține '{match.Value}'", "Rezultat", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
             }
-
-            // Check text2 lines against the pattern
-            for (int i = 0; i < lines2.Length; i++)
+            else
             {
-                if (Regex.IsMatch(lines2[i], pattern))
-                {
-                    int lineIndex = i + 1; // Line index (starting from 1)
-                    MessageBox.Show($"Pattern-ul a fost găsit în textul 2, linia {lineIndex}: {lines2[i]}", "Rezultat", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
-                else
-                {
-                    int lineIndex = i + 1; // Line index (starting from 1)
-                    MessageBox.Show($"Pattern-ul nu a fost găsit în textul 2, linia {lineIndex}: {lines2[i]}", "Rezultat", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
+                MessageBox.Show($"Pattern-ul nu a fost găsit în {textName}.", "Rezultat", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -66,14 +60,6 @@ namespace Aplicatie_Matei_Dragos_Catalin_LFA
                 return false;
             }
 
-            // Check if the pattern contains special characters
-            if (!Regex.IsMatch(pattern, @"[*+?|()\[\]{}\\.]"))
-            {
-                MessageBox.Show("Introduceți un șablon de expresie regulată valid.", "Eroare", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return false;
-            }
-
-            // Check if the pattern is a valid regular expression
             try
             {
                 // Attempt to compile the regular expression
