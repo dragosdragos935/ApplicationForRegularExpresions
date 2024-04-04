@@ -56,7 +56,13 @@ namespace Aplicatie_Matei_Dragos_Catalin_LFA
             // Check if the pattern is empty
             if (string.IsNullOrWhiteSpace(pattern))
             {
-                MessageBox.Show("Introduceți un șablon de expresie regulată.", "Eroare", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Introduceți un șablon de expresie regulată deoarece este gol spatiul.", "Eroare", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            // Check if the pattern starts with special characters
+            if (!Regex.IsMatch(pattern, @"^,;[^\w\s]"))
+            {
+                MessageBox.Show("Șablonul trebuie să înceapă cu caractere speciale.", "Eroare", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return false;
             }
 
